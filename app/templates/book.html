@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Book Meeting</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        {% for error in form.title.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+        
+        
+        {% from "_formhelpers.html" import render_field %}
+        
+            {{ form.title.label}}    
+            {{ form.title(size=32)}}
+            
+            <dl>
+                {{ render_field(form.rooms) }}
+            </dl>
+                {{ form.date.label}}
+                {{ form.date(class="dtpick") }}
+                {% for error in form.date.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            <dl>
+                {{ render_field(form.startTime) }}
+                {{ render_field(form.duration)}}
+            </dl>
+                {{ form.participants_user.label }}
+                {{ form.participants_user()}}
+                {% for error in form.participants_user.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+                
+        
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}

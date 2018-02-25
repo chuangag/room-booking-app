@@ -50,7 +50,6 @@ class Room(db.Model):
     telephone=db.Column(db.Boolean,nullable=False)
     projector=db.Column(db.Boolean,nullable=False)
     whiteboard=db.Column(db.Boolean,nullable=False)
-    location=db.Column(db.String(64),nullable=False)
     cost=db.Column(db.Integer, nullable=False)
     meetings=db.relationship('Meeting',backref='room',lazy='dynamic')
     
@@ -59,15 +58,17 @@ class Room(db.Model):
 
 class Meeting(db.Model):
     id=db.Column(db.Integer, primary_key=True, nullable=False, unique=True)
+    title=db.Column(db.String(64),nullable=False,unique=True)
     teamId=db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False)
     roomId=db.Column(db.Integer, db.ForeignKey('room.id'), nullable=False)
     bookerId=db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    startTime=db.Column(db.DateTime,nullable=False)
-    endTime=db.Column(db.DateTime,nullable=False)
+    date=db.Column(db.DateTime,nullable=False)
+    startTime=db.Column(db.Integer,nullable=False)
+    endTime=db.Column(db.Integer,nullable=False) # should be calculated with startTime and duration
     duration=db.Column(db.Integer,nullable=False)
-    cost=db.Column(db.Integer,nullable=False)
-    participants_user=db.relationship('Participants_user',backref='meeting',lazy='dynamic')
-    participants_partner=db.relationship('Participants_partner',backref='meeting',lazy='dynamic')
+    #cost=db.Column(db.Integer,nullable=False)
+    #participant_users=db.relationship('Participants_user',backref='meeting')
+    #participant_partners=db.relationship('Participants_partner',backref='meeting')
 
     def __repr__(self):
         return f'Meeting {self.id} for {self.id} last for {self.duration}'
@@ -77,17 +78,18 @@ class CostLog(db.Model):
     id=db.Column(db.Integer, primary_key=True)
     teamId=db.Column(db.Integer, nullable=False)
     teamName=db.Column(db.String(64),nullable=False)
-    meetingId=db.Column(db.Integer, nullable=False)
+    title=db.Column(db.String(64))
+    date=db.Column(db.DateTime) # should be the date of meeting
     cost=db.Column(db.Integer, nullable=False)
     
 class Participants_user(db.Model):
     id=db.Column(db.Integer,primary_key=True)
-    meetingId=db.Column(db.Integer, db.ForeignKey('meeting.id'), nullable=False)
+    meeting=db.Column(db.String(64), db.ForeignKey('meeting.title'), nullable=False)
     userId=db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 class Participants_partner(db.Model):
     id=db.Column(db.Integer,primary_key=True)
-    meetingId=db.Column(db.Integer, db.ForeignKey('meeting.id'), nullable=False)
+    meeting=db.Column(db.String(64), db.ForeignKey('meeting.title'), nullable=False)
     partnerId=db.Column(db.Integer, db.ForeignKey('businesspartner.id'), nullable=False)
 
 

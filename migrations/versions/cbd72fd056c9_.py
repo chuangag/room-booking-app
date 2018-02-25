@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 1b2c93b1361d
+Revision ID: cbd72fd056c9
 Revises: 
-Create Date: 2018-02-25 14:51:36.112423
+Create Date: 2018-02-25 22:02:26.352499
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '1b2c93b1361d'
+revision = 'cbd72fd056c9'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -26,13 +26,21 @@ def upgrade():
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('id')
     )
+    op.create_table('cost_log',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('teamId', sa.Integer(), nullable=False),
+    sa.Column('teamName', sa.String(length=64), nullable=False),
+    sa.Column('title', sa.String(length=64), nullable=True),
+    sa.Column('date', sa.DateTime(), nullable=True),
+    sa.Column('cost', sa.Integer(), nullable=False),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('room',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('roomName', sa.String(length=64), nullable=False),
     sa.Column('telephone', sa.Boolean(), nullable=False),
     sa.Column('projector', sa.Boolean(), nullable=False),
     sa.Column('whiteboard', sa.Boolean(), nullable=False),
-    sa.Column('location', sa.String(length=64), nullable=False),
     sa.Column('cost', sa.Integer(), nullable=False),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('id')
@@ -58,32 +66,34 @@ def upgrade():
     )
     op.create_table('meeting',
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('title', sa.String(length=64), nullable=False),
     sa.Column('teamId', sa.Integer(), nullable=False),
     sa.Column('roomId', sa.Integer(), nullable=False),
     sa.Column('bookerId', sa.Integer(), nullable=False),
-    sa.Column('startTime', sa.DateTime(), nullable=False),
-    sa.Column('endTime', sa.DateTime(), nullable=False),
+    sa.Column('date', sa.DateTime(), nullable=False),
+    sa.Column('startTime', sa.Integer(), nullable=False),
+    sa.Column('endTime', sa.Integer(), nullable=False),
     sa.Column('duration', sa.Integer(), nullable=False),
-    sa.Column('cost', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['bookerId'], ['user.id'], ),
     sa.ForeignKeyConstraint(['roomId'], ['room.id'], ),
     sa.ForeignKeyConstraint(['teamId'], ['team.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('id')
+    sa.UniqueConstraint('id'),
+    sa.UniqueConstraint('title')
     )
     op.create_table('participants_partner',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('meetingId', sa.Integer(), nullable=False),
+    sa.Column('meeting', sa.String(length=64), nullable=False),
     sa.Column('partnerId', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['meetingId'], ['meeting.id'], ),
+    sa.ForeignKeyConstraint(['meeting'], ['meeting.title'], ),
     sa.ForeignKeyConstraint(['partnerId'], ['businesspartner.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('participants_user',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('meetingId', sa.Integer(), nullable=False),
+    sa.Column('meeting', sa.String(length=64), nullable=False),
     sa.Column('userId', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['meetingId'], ['meeting.id'], ),
+    sa.ForeignKeyConstraint(['meeting'], ['meeting.title'], ),
     sa.ForeignKeyConstraint(['userId'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -98,5 +108,6 @@ def downgrade():
     op.drop_table('user')
     op.drop_table('team')
     op.drop_table('room')
+    op.drop_table('cost_log')
     op.drop_table('businesspartner')
     # ### end Alembic commands ###

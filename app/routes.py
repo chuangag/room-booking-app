@@ -3,13 +3,12 @@ from werkzeug.urls import url_parse
 from app import app
 from app.forms import *
 from flask_login import current_user, login_user, logout_user, login_required
-from app.models import User,Team
+from app.models import *
 from app import db
 import sqlite3
 
 @app.route('/')
 @app.route('/index')
-@login_required
 def index():
     return render_template('index.html')
 
@@ -154,3 +153,36 @@ def deleteuser():
         return redirect(url_for('index'))
     return render_template('deleteuser.html',title='Delete User',form=form)
 
+@app.route('/book',methods=['GET','POST'])
+@login_required
+def book():
+    form=BookmeetingForm()
+    if form.validate_on_submit():
+        # check time collision
+        pass
+
+        # make booking
+        booker=current_user
+    
+        team=Team.query.filter_by(id=current_user.teamId).first()
+        room=Room.query.filter_by(id=form.rooms.data).first()
+        cost=room.cost
+        endTime=form.startTime.data+form.duration.data
+        ### only user can be participant currently
+        participants_user=form.participants_user.data
+
+        meeting=Meeting(title=form.title.data,teamId=team.id,roomId=room.id,bookerId=booker.id,date=form.date.data,startTime=form.startTime.data,endTime=endTime,duration=form.duration.data)
+        db.session.add(meeting)
+
+        # Add booking log
+        log=CostLog(title=form.title.data,teamId=team.id,teamName=team.teamName,date=form.date.data,cost=cost*form.duration.data)
+        db.session.add(log)
+
+        # Add participants records(currently only user)
+        for participant in participants_user:
+            participating=Participants_user(meeting=form.title.data,userId=participant)
+            db.session.add(participating)
+        db.session.commit()
+        flash('Booking success!')
+        return redirect(url_for('index'))
+    return render_template('book.html',title='Book Meeting',form=form)

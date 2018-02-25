@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, SelectField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, SelectField, DateField, SelectMultipleField, widgets
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
-from app.models import User,Team
+from app.models import *
+import datetime
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -89,6 +90,33 @@ class DeleteuserForm(FlaskForm):
     ids=SelectField('Choose User',coerce=int,choices=UserChoiceIterable())
     submit=SubmitField('Delete')
 
+
+
+class RoomChoiceIterable(object):
+    def __iter__(self):
+        rooms=Room.query.all()
+        choices=[(room.id,room.roomName) for room in rooms] 
+        for choice in choices:
+            yield choice
+
+class BookmeetingForm(FlaskForm):
+    title=StringField('Meeting title',validators=[DataRequired()])
+    rooms=SelectField('Choose room',coerce=int,choices=RoomChoiceIterable())
+    date=DateField('Choose date', format="%m/%d/%Y",validators=[DataRequired()])
+    startTime=SelectField('Choose starting time(in 24hr expression)',coerce=int,choices=[(i,i) for i in range(9,19)])
+    duration=SelectField('Choose duration of the meeting(in hours)',coerce=int,choices=[(i,i) for i in range(1,6)])
+    participants_user=SelectMultipleField('Choose participants',coerce=int,choices=UserChoiceIterable(),option_widget=widgets.CheckboxInput(),widget=widgets.ListWidget(prefix_label=False),validators=[DataRequired()])
+    submit=SubmitField('Book')
+
+    def validate_title(self,title):
+        meeting=Meeting.query.filter_by(title=self.title.data).first()
+        if meeting is not None: # username exist
+            raise ValidationError('Please use another meeting title.')
+
+    def validate_date(self,date):
+        if self.date.data<datetime.datetime.now().date():
+            raise ValidationError('You can only book for day after today.')
+    
 
 
     
