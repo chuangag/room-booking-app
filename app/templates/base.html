@@ -3,7 +3,18 @@
       <title>Booking System</title>
     </head>
     <body>
-        <div><a href="{{ url_for('index') }}">Home</a> <a href="{{ url_for('login') }}">Login</a></div>
+        <div>
+            <a href="{{ url_for('index') }}">Home</a>
+            {% if current_user.is_anonymous %}
+            <a href="{{ url_for('login') }}">Login</a>
+            {% else %}
+            <a href="{{ url_for('logout')}}">Logout</a>
+            {% endif %}
+            <a href="{{ url_for('addteam')}}">Add Team</a>
+            <a href="{{ url_for('adduser')}}">Add User</a>
+            <a href="{{ url_for('deleteteam')}}">Delete Team</a>
+            <a href="{{ url_for('deleteuser')}}">Delete User</a>
+        </div>
         <hr>
         {% with messages = get_flashed_messages() %}
         {% if messages %}
