@@ -190,8 +190,9 @@ def book():
         room=Room.query.filter_by(id=form.rooms.data).first()
         cost=room.cost
         endTime=form.startTime.data+form.duration.data
-        ### only user can be participant currently
+
         participants_user=form.participants_user.data
+        participants_partner=form.participants_partner.data
 
         meeting=Meeting(title=form.title.data,teamId=team.id,roomId=room.id,bookerId=booker.id,date=form.date.data,startTime=form.startTime.data,endTime=endTime,duration=form.duration.data)
         db.session.add(meeting)
@@ -200,11 +201,46 @@ def book():
         log=CostLog(title=form.title.data,teamId=team.id,teamName=team.teamName,date=form.date.data,cost=cost*form.duration.data)
         db.session.add(log)
 
-        # Add participants records(currently only user)
+        # Add participants records
         for participant in participants_user:
             participating=Participants_user(meeting=form.title.data,userId=participant)
             db.session.add(participating)
+        for participant in participants_partner:
+            participating=Participants_partner(meeting=form.title.data,partnerId=participant)
+            db.session.add(participating)
+
         db.session.commit()
         flash('Booking success!')
         return redirect(url_for('index'))
     return render_template('book.html',title='Book Meeting',form=form)
+
+@app.route('/cancelbooking',methods=['GET','POST'])
+@login_required
+def cancelbooking():
+    if not current_user.is_authenticated:
+        flash('Please Log in to cancel booking')
+        return redirect(url_for('login')) 
+    
+    form=CancelbookingForm()
+    if form.validate_on_submit():
+        meeting=Meeting.query.filter_by(id=form.ids.data).first()
+
+        if meeting.date<=datetime.now():
+            flash(f'Past booking cannot be canceled')
+            return redirect(url_for('cancelbooking'))
+        
+        participants_user=Participants_user.query.filter_by(meeting=meeting.title).all()
+        for part in participants_user:
+            db.session.delete(part)
+        participants_partner=Participants_partner.query.filter_by(meeting=meeting.title).all()
+        for part in participants_partner:
+            db.session.delete(part)
+        
+        costlog=CostLog.query.filter_by(title=meeting.title).first()
+        db.session.delete(costlog)
+        
+        db.session.delete(meeting)
+        db.session.commit()
+        flash(f'Meeting {meeting.title} successfully deleted! ')
+        return redirect(url_for('index'))
+    return render_template('cancelbooking.html',title='Cancel Meeting',form=form)

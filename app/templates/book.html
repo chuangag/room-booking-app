@@ -31,6 +31,11 @@
                 {% for error in form.participants_user.errors %}
                 <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
+                {{ form.participants_partner.label }}
+                {{ form.participants_partner()}}
+                {% for error in form.participants_partner.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
                 
         
         <p>{{ form.submit() }}</p>

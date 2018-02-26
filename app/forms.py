@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, SelectField, DateField, SelectMultipleField, widgets
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
+from flask_login import current_user
 from app.models import *
 import datetime
 
@@ -82,8 +83,16 @@ class DeleteteamForm(FlaskForm):
 class UserChoiceIterable(object):
     def __iter__(self):
         users=User.query.all()
-        choices=[(user.id,user.username) for user in users] 
-        choices=[choice for choice in choices if choice[1]!='admin'] # do not delete admin
+        choices=[(user.id,f'{user.fullname}, team {Team.query.filter_by(id=user.teamId).first().teamName}') for user in users] 
+        choices=[choice for choice in choices if 'admin' not in choice[1]] # do not delete admin
+        for choice in choices:
+            yield choice
+
+class PartnerChoiceIterable(object):
+    def __iter__(self):
+        partners=Businesspartner.query.all()
+        choices=[(partner.id,f'{partner.name} from {partner.representing}') for partner in partners] 
+        #choices=[choice for choice in choices if choice[1]!='admin'] # do not delete admin
         for choice in choices:
             yield choice
 
@@ -105,7 +114,8 @@ class BookmeetingForm(FlaskForm):
     date=DateField('Choose date', format="%m/%d/%Y",validators=[DataRequired()])
     startTime=SelectField('Choose starting time(in 24hr expression)',coerce=int,choices=[(i,i) for i in range(9,19)])
     duration=SelectField('Choose duration of the meeting(in hours)',coerce=int,choices=[(i,i) for i in range(1,6)])
-    participants_user=SelectMultipleField('Choose participants',coerce=int,choices=UserChoiceIterable(),option_widget=widgets.CheckboxInput(),widget=widgets.ListWidget(prefix_label=False),validators=[DataRequired()])
+    participants_user=SelectMultipleField('Choose participants from company',coerce=int,choices=UserChoiceIterable(),option_widget=widgets.CheckboxInput(),widget=widgets.ListWidget(prefix_label=False),validators=[DataRequired()])
+    participants_partner=SelectMultipleField('Choose participants from partners',coerce=int,choices=PartnerChoiceIterable(),option_widget=widgets.CheckboxInput(),widget=widgets.ListWidget(prefix_label=False))
     submit=SubmitField('Book')
 
     def validate_title(self,title):
@@ -116,6 +126,21 @@ class BookmeetingForm(FlaskForm):
     def validate_date(self,date):
         if self.date.data<datetime.datetime.now().date():
             raise ValidationError('You can only book for day after today.')
+    
+
+class MeetingChoiceIterable(object):
+    def __iter__(self):
+        meetings=Meeting.query.filter_by(bookerId=current_user.id).all()
+        choices=[(meeting.id,f'{meeting.title} in {Room.query.filter_by(id=meeting.roomId).first().roomName} start at {meeting.date.date()} from {meeting.startTime}') for meeting in meetings] 
+        for choice in choices:
+            yield choice
+
+class CancelbookingForm(FlaskForm):
+    #def __init__(self,userId,**kw):
+     #   super(CancelbookingForm, self).__init__(**kw)
+      #  self.name.userId =userId
+    ids=SelectField('Choose meeting to cancel',coerce=int,choices=MeetingChoiceIterable()) 
+    submit=SubmitField('Cancel') 
     
 
 
