@@ -123,6 +123,17 @@ def deleteteam():
     
     if form.validate_on_submit():
         team=Team.query.filter_by(id=form.ids.data).first()
+
+        meetings=Meeting.query.filter_by(teamId=team.id).all()
+        hasFutureBooking=False
+        for meeting in meetings:
+            if meeting.date>datetime.now():
+                hasFutureBooking=True
+                break
+        if hasFutureBooking:
+            flash('You cannot delete a team that holds future bookings!')
+            return redirect(url_for('deleteteam'))
+
         # delete all users in a deleted team
         userInTeam=User.query.filter_by(teamId=form.ids.data).all()
         for user in userInTeam:
@@ -147,6 +158,17 @@ def deleteuser():
     form=DeleteuserForm()
     if form.validate_on_submit():
         user=User.query.filter_by(id=form.ids.data).first()
+
+        meetings=Meeting.query.filter_by(bookerId=user.id).all()
+        hasFutureBooking=False
+        for meeting in meetings:
+            if meeting.date>datetime.now():
+                hasFutureBooking=True
+                break
+        if hasFutureBooking:
+            flash('You cannot delete a user that holds future bookings!')
+            return redirect(url_for('deleteuser'))
+
         db.session.delete(user)
         db.session.commit()
         flash(f'User {user.username} successfully deleted! ')

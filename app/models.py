@@ -59,9 +59,9 @@ class Room(db.Model):
 class Meeting(db.Model):
     id=db.Column(db.Integer, primary_key=True, nullable=False, unique=True)
     title=db.Column(db.String(64),nullable=False,unique=True)
-    teamId=db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False)
+    teamId=db.Column(db.Integer, db.ForeignKey('team.id'))
     roomId=db.Column(db.Integer, db.ForeignKey('room.id'), nullable=False)
-    bookerId=db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    bookerId=db.Column(db.Integer, db.ForeignKey('user.id'))
     date=db.Column(db.DateTime,nullable=False)
     startTime=db.Column(db.Integer,nullable=False)
     endTime=db.Column(db.Integer,nullable=False) # should be calculated with startTime and duration
@@ -84,13 +84,13 @@ class CostLog(db.Model):
     
 class Participants_user(db.Model):
     id=db.Column(db.Integer,primary_key=True)
-    meeting=db.Column(db.String(64), db.ForeignKey('meeting.title'), nullable=False)
-    userId=db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    meeting=db.Column(db.String(64), db.ForeignKey('meeting.title'))
+    userId=db.Column(db.Integer, db.ForeignKey('user.id'))
 
 class Participants_partner(db.Model):
     id=db.Column(db.Integer,primary_key=True)
-    meeting=db.Column(db.String(64), db.ForeignKey('meeting.title'), nullable=False)
-    partnerId=db.Column(db.Integer, db.ForeignKey('businesspartner.id'), nullable=False)
+    meeting=db.Column(db.String(64), db.ForeignKey('meeting.title'))
+    partnerId=db.Column(db.Integer, db.ForeignKey('businesspartner.id'))
 
 
 

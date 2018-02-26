@@ -71,6 +71,7 @@ class TeamChoiceIterable(object):
     def __iter__(self):
         teams=Team.query.all()
         choices=[(team.id,team.teamName) for team in teams] 
+        choices=[choice for choice in choices if choice[1]!='Admin']
         for choice in choices:
             yield choice
 
@@ -89,7 +90,6 @@ class UserChoiceIterable(object):
 class DeleteuserForm(FlaskForm):
     ids=SelectField('Choose User',coerce=int,choices=UserChoiceIterable())
     submit=SubmitField('Delete')
-
 
 
 class RoomChoiceIterable(object):
