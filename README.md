@@ -1,6 +1,6 @@
 A toy room booking system
 =====
-The web application is build with python Flask framwork along with SQLite3 database. It has basic login system
+The web application is build with python Flask framwork along with SQLite3 database. It has basic login system since the booking have to be done with authentication. A admin account is created by default, with username: admin, and password: admin. The administrator have the access to directly manipulate team and users. 
 
 ## Requirements
 1. Python 3.6, recommending [Anaconda](https://anaconda.org/anaconda/python)
