@@ -1,7 +1,27 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Rooms occupation status on {{date}}:</h1>
+<h1>Room details</h1>
+<table border="1" cellpadding=3>
+        <tr>
+            <th>Room</th>
+            <th>Telephone</th>
+            <th>Projector</th>
+            <th>White Board</th>
+            <th>Price(dollar/hour)</th>
+        </tr>
+    {% for room in allrooms %}
+        <tr>
+            <td>{{ room.roomName }}</td>
+            <td>{{ room.tel}}</td> 
+            <td>{{ room.pro}}</td> 
+            <td>{{ room.wb}}</td> 
+            <td>{{ room.cost}}</td> 
+        </tr>
+    {% endfor %}
+</table>
+<hr>
+<h2>Rooms occupation status on {{date}}:</h2>
 <table>
     <tr>
         <th>Room</th>

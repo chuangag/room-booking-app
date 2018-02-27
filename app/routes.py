@@ -277,6 +277,7 @@ def roomoccupation():
         roomoccus=[]
         hours=range(9,23)
         rooms=Room.query.all()
+        allrooms=[]
         for room in rooms:
             roomoccu=dict()
             roomoccu['roomName']=room.roomName
@@ -289,8 +290,10 @@ def roomoccupation():
                         roomoccu['roomhours'][hour-9]=True
                         break
             roomoccus.append(roomoccu)
-        
-        return render_template('roomoccupationlist.html',title='Room Occupation',roomoccus=roomoccus,date=form.date.data,hours=[str(hour) for hour in hours])
+            
+            allrooms.append({'roomName':room.roomName,'tel':'Yes' if room.telephone else 'No','pro':'Yes' if room.projector else 'No',\
+                             'wb':'Yes' if room.whiteboard else 'No','cost':room.cost})
+        return render_template('roomoccupationlist.html',title='Room Occupation',roomoccus=roomoccus,date=form.date.data,hours=[str(hour) for hour in hours],allrooms=allrooms)
     return render_template('roomoccupation.html',title='Room Occupation Status',form=form)
 
 @app.route('/meetingbooker')
