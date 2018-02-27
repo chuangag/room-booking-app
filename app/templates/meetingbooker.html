@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Booker of meetings:</h1>
+<table border="1" cellpadding=3>
+    <tr>
+        <th>Meeting</th>
+        <th>Team</th>
+        <th>Room</th>
+        <th>Booker</th>
+        <th>Date</th>
+        <th>Time</th>
+    </tr>
+{% for meeting in meetings %}
+    <tr>
+        <td>{{ meeting.title }}</td>
+        <td>{{ meeting.team}}</td> 
+        <td>{{ meeting.room}}</td> 
+        <td>{{ meeting.booker}}</td> 
+        <td>{{ meeting.date}}</td> 
+        <td>{{ meeting.time}}</td> 
+    </tr>
+{% endfor %}
+</table>
+{% endblock %}

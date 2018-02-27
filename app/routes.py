@@ -292,3 +292,18 @@ def roomoccupation():
         print(roomoccus)
         return render_template('roomoccupationlist.html',title='Room Occupation',roomoccus=roomoccus,date=form.date.data,hours=[str(hour) for hour in hours])
     return render_template('roomoccupation.html',title='Room Occupation Status',form=form)
+
+@app.route('/meetingbooker')
+def meetingbooker():
+    meetings=Meeting.query.order_by(Meeting.date).all()
+    meetingreturns=[]
+    for meeting in meetings:
+        meetingreturn=dict()
+        meetingreturn['title']=meeting.title
+        meetingreturn['team']=Team.query.filter_by(id=meeting.teamId).first().teamName
+        meetingreturn['room']=Room.query.filter_by(id=meeting.roomId).first().roomName
+        meetingreturn['booker']=User.query.filter_by(id=meeting.bookerId).first().fullname
+        meetingreturn['date']=meeting.date.date()
+        meetingreturn['time']=f'{meeting.startTime} to {meeting.endTime}'
+        meetingreturns.append(meetingreturn)
+    return render_template('meetingbooker.html',meetings=meetingreturns)
