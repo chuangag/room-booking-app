@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Room Occupation</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+                {{ form.date.label}}
+                {{ form.date(class="dtpick") }}
+                {% for error in form.date.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+        
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}

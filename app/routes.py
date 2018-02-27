@@ -180,8 +180,15 @@ def deleteuser():
 def book():
     form=BookmeetingForm()
     if form.validate_on_submit():
+        
         # check time collision
-        pass
+        meetingcollisions=Meeting.query.filter_by(date=datetime.combine(form.date.data,datetime.min.time())).filter_by(roomId=form.rooms.data).all()
+        print(len(meetingcollisions))
+        for meetingcollision in meetingcollisions:
+            # [a, b] overlaps with [x, y] iff b > x and a < y
+            if (form.startTime.data<meetingcollision.endTime and (form.startTime.data+form.duration.data)>meetingcollision.startTime):
+                flash(f'The time from {meetingcollision.startTime} to {meetingcollision.endTime} is already booked by {User.query.filter_by(id=meetingcollision.bookerId).first().fullname}.')
+                return redirect(url_for('book'))
 
         # make booking
         booker=current_user
@@ -244,3 +251,44 @@ def cancelbooking():
         flash(f'Meeting {meeting.title} successfully deleted! ')
         return redirect(url_for('index'))
     return render_template('cancelbooking.html',title='Cancel Meeting',form=form)
+
+@app.route('/roomavailable',methods=['GET','POST'])
+def roomavailable():
+    form=RoomavailableForm()
+    if form.validate_on_submit():
+        meetings=Meeting.query.filter_by(date=datetime.combine(form.date.data,datetime.min.time())).all()
+        roomsOccupied=set()
+        for meeting in meetings:
+            if (form.startTime.data<meeting.endTime and (form.startTime.data+form.duration.data)>meeting.startTime): 
+                roomsOccupied.add(Room.query.filter_by(id=meeting.roomId).first())
+        rooms=Room.query.all()
+        roomsavailable=[]
+        for room in rooms:
+            if room not in roomsOccupied:
+                roomsavailable.append(room)
+        return render_template('roomavailablelist.html',title='Room available',rooms=roomsavailable)
+    return render_template('roomavailable.html',title='Room availability check',form=form)
+
+@app.route('/roomoccupation',methods=['GET','POST'])
+def roomoccupation():
+    form=RoomoccupationForm()
+    if form.validate_on_submit():
+        #meetings=Meeting.query.filter_by(date=datetime.combine(form.date.data,datetime.min.time())).all()
+        roomoccus=[]
+        hours=range(9,23)
+        rooms=Room.query.all()
+        for room in rooms:
+            roomoccu=dict()
+            roomoccu['roomName']=room.roomName
+            roomoccu['roomhours']=[False]*14
+            for hour in hours:
+                meetings=Meeting.query.filter_by(date=datetime.combine(form.date.data,datetime.min.time())).filter_by(roomId=room.id).all()
+                
+                for meeting in meetings:
+                    if (hour+0.5)<meeting.endTime and (hour+0.5)>meeting.startTime:
+                        roomoccu['roomhours'][hour-9]=True
+                        break
+            roomoccus.append(roomoccu)
+        print(roomoccus)
+        return render_template('roomoccupationlist.html',title='Room Occupation',roomoccus=roomoccus,date=form.date.data,hours=[str(hour) for hour in hours])
+    return render_template('roomoccupation.html',title='Room Occupation Status',form=form)

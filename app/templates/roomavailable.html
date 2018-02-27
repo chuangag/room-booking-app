@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Check Available Rooms</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        {% from "_formhelpers.html" import render_field %}
+                {{ form.date.label}}
+                {{ form.date(class="dtpick") }}
+                {% for error in form.date.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            <dl>
+                {{ render_field(form.startTime) }}
+                {{ render_field(form.duration)}}
+            </dl>
+        
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}

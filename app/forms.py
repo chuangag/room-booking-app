@@ -141,7 +141,15 @@ class CancelbookingForm(FlaskForm):
       #  self.name.userId =userId
     ids=SelectField('Choose meeting to cancel',coerce=int,choices=MeetingChoiceIterable()) 
     submit=SubmitField('Cancel') 
-    
 
+class RoomavailableForm(FlaskForm):
+    date=DateField('Choose date', format="%m/%d/%Y",validators=[DataRequired()])
+    startTime=SelectField('Choose starting time(in 24hr expression)',coerce=int,choices=[(i,i) for i in range(9,19)])
+    duration=SelectField('Choose duration of the meeting(in hours)',coerce=int,choices=[(i,i) for i in range(1,6)])
+    submit=SubmitField('Check')
+    
+class RoomoccupationForm(FlaskForm):
+    date=DateField('Choose date', format="%m/%d/%Y",validators=[DataRequired()])
+    submit=SubmitField('Check')
 
     

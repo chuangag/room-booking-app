@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Rooms occupation status on {{date}}:</h1>
+<table>
+    <tr>
+        <th>Room</th>
+        {% for hour in hours %}
+        <th>{{hour}}</th>
+        {% endfor %}
+    </tr>
+{% for roomoccu in roomoccus %}
+    <tr>
+        <td>{{ roomoccu.roomName }}</td>
+        {% for hour in roomoccu.roomhours %}
+        {% if hour %}
+        <td bgcolor="#FF0000"> X </td> 
+        {% else %} 
+        <td bgcolor="#00FF00"> O </td> 
+        {% endif %}
+        {% endfor %} 
+    </tr>
+{% endfor %}
+</table>
+{% endblock %}
