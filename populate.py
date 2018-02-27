@@ -48,6 +48,10 @@ db.session.add(room)
 meeting=Meeting(id=9,title='past meeting',teamId=3,roomId=2,bookerId=2,date=datetime(2018,2,15),startTime=10,endTime=14,duration=4)
 db.session.add(meeting)
 
+# add past meeting cost log
+costlog=CostLog(id=10,teamId=4,teamName='Dev',title='past meeting',date=datetime(2018,2,15),cost=1200)
+db.session.add(costlog)
+
 # add business partners
 partner=Businesspartner(id=1,name='Zeus',representing='Thunder electricity',position='CEO')
 db.session.add(partner)
@@ -55,6 +59,5 @@ partner=Businesspartner(id=2,name='Yan',representing='Facebook',position='CTO')
 db.session.add(partner)
 partner=Businesspartner(id=3,name='Xanos',representing='Avengers',position='Boss')
 db.session.add(partner)
-
 
 db.session.commit()

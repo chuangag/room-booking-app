@@ -289,7 +289,7 @@ def roomoccupation():
                         roomoccu['roomhours'][hour-9]=True
                         break
             roomoccus.append(roomoccu)
-        print(roomoccus)
+        
         return render_template('roomoccupationlist.html',title='Room Occupation',roomoccus=roomoccus,date=form.date.data,hours=[str(hour) for hour in hours])
     return render_template('roomoccupation.html',title='Room Occupation Status',form=form)
 
@@ -322,3 +322,22 @@ def meetingparticipants():
             participants.append(f'partner {Businesspartner.query.filter_by(id=part.partnerId).first().name} from {Businesspartner.query.filter_by(id=part.partnerId).first().representing}')
         return render_template('meetingparticipants.html',title='Meeting Participants',meetingtitle=meeting.title,participants=participants)
     return render_template('meetingparticipantscheck.html',title='Meeting Participants',form=form)
+
+@app.route('/costs',methods=['GET','POST'])
+def costs():
+    form=CostaccruedForm()
+    if form.validate_on_submit():
+        costlogs=CostLog.query.filter(CostLog.date>=datetime.combine(form.startdate.data,datetime.min.time())).filter(CostLog.date<=datetime.combine(form.enddate.data,datetime.min.time())).all()
+        teams=Team.query.all()
+        teamcosts=[]
+        # slow implementation, can be optimized
+        for team in teams:
+            teamcost=dict()
+            teamcost['teamName']=team.teamName
+            teamcost['total']=0
+            for costlog in costlogs:
+                if costlog.teamId==team.id:
+                    teamcost['total']+=costlog.cost
+            teamcosts.append(teamcost)
+        return render_template('costs.html',title='Cost Accrued',startdate=form.startdate.data,enddate=form.enddate.data,teamcosts=teamcosts)
+    return render_template('costcheck.html',title='Cost Accrued check',form=form)

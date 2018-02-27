@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Check Accrued Costs</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+                {{ form.startdate.label}}
+                {{ form.startdate(class="dtpick") }}
+                {% for error in form.startdate.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+                {{ form.enddate.label}}
+                {{ form.enddate(class="dtpick") }}
+                {% for error in form.enddate.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %} 
+        
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}

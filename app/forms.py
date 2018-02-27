@@ -164,3 +164,11 @@ class MeetingparticipantsForm(FlaskForm):
     ids=SelectField('Choose meeting',coerce=int,choices=MeetingChoiceAllIterable()) 
     submit=SubmitField('Check')  
     
+class CostaccruedForm(FlaskForm):
+    startdate=DateField('Choose start date', format="%m/%d/%Y",validators=[DataRequired()])
+    enddate=DateField('Choose end date', format="%m/%d/%Y",validators=[DataRequired()]) 
+    submit=SubmitField('Check')
+
+    def validate_enddate(self,enddate):
+        if enddate.data<self.startdate.data:
+            raise ValidationError('End Date must be after Start Date')
