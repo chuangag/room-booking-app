@@ -16,6 +16,15 @@ $ pip install flask-sqlalchemy
 $ pip install flask-migrate
 $ pip install flask-login
 ```
+2. Define the project
+```
+$ export FLASK_APP=lab2.py
+```
+
+3. Init the database
+```
+$ flask db init
+```
 
 ## Migrating data
 1. Run the migration command from the project directory to create tables
