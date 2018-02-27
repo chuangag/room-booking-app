@@ -307,3 +307,18 @@ def meetingbooker():
         meetingreturn['time']=f'{meeting.startTime} to {meeting.endTime}'
         meetingreturns.append(meetingreturn)
     return render_template('meetingbooker.html',meetings=meetingreturns)
+
+@app.route('/meetingparticipants',methods=['GET','POST'])
+def meetingparticipants():
+    form=MeetingparticipantsForm()
+    if form.validate_on_submit():
+        meeting=Meeting.query.filter_by(id=form.ids.data).first()
+        participants=[]
+        participants_user=Participants_user.query.filter_by(meeting=meeting.title).all()
+        participants_partner=Participants_partner.query.filter_by(meeting=meeting.title).all()
+        for part in participants_user:
+            participants.append(f'{User.query.filter_by(id=part.userId).first().fullname} from {Team.query.filter_by(id=User.query.filter_by(id=part.userId).first().teamId).first().teamName}')
+        for part in participants_partner:
+            participants.append(f'partner {Businesspartner.query.filter_by(id=part.partnerId).first().name} from {Businesspartner.query.filter_by(id=part.partnerId).first().representing}')
+        return render_template('meetingparticipants.html',title='Meeting Participants',meetingtitle=meeting.title,participants=participants)
+    return render_template('meetingparticipantscheck.html',title='Meeting Participants',form=form)

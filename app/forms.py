@@ -153,4 +153,14 @@ class RoomoccupationForm(FlaskForm):
     submit=SubmitField('Check')
 
 
+class MeetingChoiceAllIterable(object):
+    def __iter__(self):
+        meetings=Meeting.query.all()
+        choices=[(meeting.id,f'{meeting.title} in {Room.query.filter_by(id=meeting.roomId).first().roomName} start at {meeting.date.date()} from {meeting.startTime}') for meeting in meetings] 
+        for choice in choices:
+            yield choice
+
+class MeetingparticipantsForm(FlaskForm):
+    ids=SelectField('Choose meeting',coerce=int,choices=MeetingChoiceAllIterable()) 
+    submit=SubmitField('Check')  
     
