@@ -33,6 +33,15 @@ db.session.add(user)
 user=User(id=5,username='dave',fullname='Dave',position='pm',teamId=4)
 user.set_password('dave')
 db.session.add(user)
+user=User(id=6,username='eve',fullname='Eve',position='employee',teamId=6)
+user.set_password('eve')
+db.session.add(user)
+user=User(id=7,username='frank',fullname='Frank',position='employee',teamId=5)
+user.set_password('frank')
+db.session.add(user)
+user=User(id=8,username='george',fullname='George',position='manager',teamId=3)
+user.set_password('george')
+db.session.add(user)
 
 # add rooms
 room=Room(id=1,roomName='room1',telephone=True,projector=True,whiteboard=True,cost=500)
@@ -59,5 +68,55 @@ partner=Businesspartner(id=2,name='Yan',representing='Facebook',position='CTO')
 db.session.add(partner)
 partner=Businesspartner(id=3,name='Xanos',representing='Avengers',position='Boss')
 db.session.add(partner)
+
+# add past meetings
+meeting=Meeting(id=15,title='future meeting1',teamId=3,roomId=2,bookerId=2,date=datetime(2018,3,15),startTime=11,endTime=14,duration=3)
+db.session.add(meeting)
+
+# add past meeting cost log
+costlog=CostLog(id=15,teamId=3,teamName='Ops',title='future meeting1',date=datetime(2018,3,15),cost=900)
+db.session.add(costlog)
+
+meeting=Meeting(id=16,title='future meeting2',teamId=6,roomId=3,bookerId=6,date=datetime(2018,3,15),startTime=10,endTime=13,duration=3)
+db.session.add(meeting)
+
+# add past meeting cost log
+costlog=CostLog(id=16,teamId=6,teamName='Market',title='future meeting2',date=datetime(2018,3,15),cost=300)
+db.session.add(costlog)
+
+meeting=Meeting(id=17,title='future meeting3',teamId=6,roomId=3,bookerId=6,date=datetime(2018,3,15),startTime=15,endTime=19,duration=4)
+db.session.add(meeting)
+
+# add past meeting cost log
+costlog=CostLog(id=17,teamId=6,teamName='Market',title='future meeting3',date=datetime(2018,3,15),cost=400)
+db.session.add(costlog)
+
+
+
+participants_user=Participants_user(id=1,meeting='future meeting1',userId=2)
+db.session.add(participants_user)
+participants_user=Participants_user(id=2,meeting='future meeting1',userId=4)
+db.session.add(participants_user)
+participants_partner=Participants_partner(id=1,meeting='future meeting1',partnerId=2)
+db.session.add(participants_partner)
+
+participants_user=Participants_user(id=3,meeting='future meeting2',userId=2)
+db.session.add(participants_user)
+participants_user=Participants_user(id=4,meeting='future meeting2',userId=4)
+db.session.add(participants_user)
+participants_partner=Participants_partner(id=2,meeting='future meeting2',partnerId=2)
+db.session.add(participants_partner)
+participants_user=Participants_user(id=5,meeting='future meeting3',userId=7)
+db.session.add(participants_user)
+participants_user=Participants_user(id=6,meeting='future meeting3',userId=4)
+db.session.add(participants_user)
+participants_partner=Participants_partner(id=3,meeting='future meeting3',partnerId=1)
+db.session.add(participants_partner)
+participants_user=Participants_user(id=7,meeting='past meeting',userId=2)
+db.session.add(participants_user)
+participants_user=Participants_user(id=8,meeting='past meeting',userId=7)
+db.session.add(participants_user)
+participants_partner=Participants_partner(id=4,meeting='past meeting',partnerId=3)
+db.session.add(participants_partner)
 
 db.session.commit()

@@ -331,15 +331,15 @@ def costs():
     form=CostaccruedForm()
     if form.validate_on_submit():
         costlogs=CostLog.query.filter(CostLog.date>=datetime.combine(form.startdate.data,datetime.min.time())).filter(CostLog.date<=datetime.combine(form.enddate.data,datetime.min.time())).all()
-        teams=Team.query.all()
+        teams=list(set([costlog.teamName for costlog in costlogs]))
         teamcosts=[]
         # slow implementation, can be optimized
         for team in teams:
             teamcost=dict()
-            teamcost['teamName']=team.teamName
+            teamcost['teamName']=team
             teamcost['total']=0
             for costlog in costlogs:
-                if costlog.teamId==team.id:
+                if costlog.teamName==team:
                     teamcost['total']+=costlog.cost
             teamcosts.append(teamcost)
         return render_template('costs.html',title='Cost Accrued',startdate=form.startdate.data,enddate=form.enddate.data,teamcosts=teamcosts)
