@@ -1,6 +1,6 @@
 Product Requirements
  
-Author(s): Afua Achee Ryan Cooper, Jon
+Author(s): Afua Acheampong, Ryan Cooper, Jon Johnson, Elizabeth Oluokun
 
 Related Documents
 
