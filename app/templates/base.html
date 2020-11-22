@@ -1,7 +1,7 @@
 <html>
     <head>
       <title>Booking System</title>
-      <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+      <link rel="stylesheet" href=styles.css>
       <script src="//code.jquery.com/jquery-1.10.2.js"></script>
       <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
       <script>
@@ -19,16 +19,13 @@
             {% else %}
             <a href="{{ url_for('logout')}}">Logout</a>
             {% endif %}
-            <a href="{{ url_for('book')}}">Book Meeting</a>
+            <a href="{{ url_for('book')}}">Book Appointment</a>
             <a href="{{ url_for('cancelbooking')}}">Cancel Booking</a>
-            <a href="{{ url_for('roomavailable')}}">Room Availability</a>
-            <a href="{{ url_for('roomoccupation')}}">Room Status</a>
+            <a href="{{ url_for('roomavailable')}}">Table Availability</a>
+            <a href="{{ url_for('roomoccupation')}}">Table Status</a>
             <a href="{{ url_for('meetingbooker')}}">Meetings</a>
             <a href="{{ url_for('meetingparticipants')}}">Participants</a>
-            <a href="{{ url_for('costs')}}">Cost Accrued</a>
-            <a href="{{ url_for('addteam')}}">Add Team</a>
             <a href="{{ url_for('adduser')}}">Add User</a>
-            <a href="{{ url_for('deleteteam')}}">Delete Team</a>
             <a href="{{ url_for('deleteuser')}}">Delete User</a>
             {% if current_user.is_authenticated %}
             <div align="right">Log in as: {{current_user.fullname}}</div>
